@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EleBox | Streetwear</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090a0d;color:white;font-family:Arial}
+header{padding:22px;background:#111318;display:flex;justify-content:space-between;align-items:center}
+h1{color:#b7ff35;font-size:32px;margin:0}
+button{background:#b7ff35;color:#090a0d;border:0;padding:11px;font-weight:bold;cursor:pointer;margin:4px}
+main{max-width:1100px;margin:auto;padding:20px}
+.hero{text-align:center;padding:65px 10px;background:#181b21;margin:20px 0}
+.hero h2{font-size:48px;margin:10px}
+input,select{padding:12px;background:#181b21;color:white;border:1px solid #444;margin:5px;max-width:100%}
+#admin{display:none;background:#181b21;padding:15px;margin:20px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:15px}
+.product{background:#181b21;padding:12px;border:1px solid #333}
+.product img{width:100%;height:210px;object-fit:cover}
+.price{color:#b7ff35;font-weight:bold}
+small{display:block;color:#aaa;margin-top:5px}
+footer{text-align:center;padding:30px;color:#aaa}
+</style>
+</head>
+<body>
+<header>
+<h1>EleBox.</h1>
+<button onclick="admin()">ADMINISTRAR</button>
+</header>
+<main>
+<section class="hero">
+<p>NO RULES. JUST YOUR STYLE.</p>
+<h2>WEAR YOUR VIBE.</h2>
+<p>STREETWEAR · OVERSIZED · Y2K</p>
+<button onclick="document.getElementById('catalogo').scrollIntoView()">VER CATÁLOGO</button>
+</section>
+
+<section id="admin">
+<h2>ADMINISTRAR PRODUCTOS</h2>
+<input id="nombre" placeholder="Nombre de la prenda">
+<select id="categoria">
+<option>REMERAS</option>
+<option>BUZOS</option>
+<option>PANTALONES</option>
+<option>ACCESORIOS</option>
+</select>
+<input id="precio" type="number" placeholder="Precio en guaraníes">
+<input id="foto" placeholder="Enlace de foto HTTPS">
+<button onclick="agregar()">AGREGAR PRODUCTO</button>
+</section>
+
+<section id="catalogo">
+<h2>CATÁLOGO / 2026</h2>
+<input id="buscar" placeholder="Buscar prenda..." oninput="mostrar()">
+<div>
+<button onclick="filtro='TODOS';mostrar()">TODOS</button>
+<button onclick="filtro='REMERAS';mostrar()">REMERAS</button>
+<button onclick="filtro='BUZOS';mostrar()">BUZOS</button>
+<button onclick="filtro='PANTALONES';mostrar()">PANTALONES</button>
+<button onclick="filtro='ACCESORIOS';mostrar()">ACCESORIOS</button>
+</div>
+<div class="grid" id="productos"></div>
+</section>
+</main>
+<footer>EleBox © 2026 · STREETWEAR PARAGUAY</footer>
+
+<script>
+const cambio=6062;
+let filtro="TODOS";
+let productos=JSON.parse(localStorage.getItem("elebox")||"null")||[
+{nombre:"Oversized Core Tee",categoria:"REMERAS",precio:85000,foto:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600"},
+{nombre:"Graphic Tee",categoria:"REMERAS",precio:95000,foto:"https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600"},
+{nombre:"Heavy Hoodie",categoria:"BUZOS",precio:180000,foto:"https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600"},
+{nombre:"Zip Hoodie",categoria:"BUZOS",precio:195000,foto:"https://images.unsplash.com/photo-1578681994506-b8f463449011?w=600"},
+{nombre:"Baggy Cargo",categoria:"PANTALONES",precio:210000,foto:"https://images.unsplash.com/photo-1542272604-787c3835535d?w=600"},
+{nombre:"Street Cap",categoria:"ACCESORIOS",precio:65000,foto:"https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600"}
+];
+
+function guardar(){
+localStorage.setItem("elebox",JSON.stringify(productos));
+}
+function mostrar(){
+let q=document.getElementById("buscar").value.toLowerCase();
+document.getElementById("productos").innerHTML="";
+productos.forEach((p,i)=>{
+if(filtro!=="TODOS"&&p.categoria!==filtro)return;
+if(!p.nombre.toLowerCase().includes(q))return;
+document.getElementById("productos").innerHTML+=`
+<div class="product">
+<img src="${p.foto}" alt="${p.nombre}">
+<h3>${p.nombre}</h3>
+<p>${p.categoria}</p>
+<div class="price">$${(p.precio/cambio).toFixed(2)} USD</div>
+<small>₲ ${p.precio.toLocaleString("es-PY")}</small>
+<button onclick="eliminar(${i})">ELIMINAR</button>
+</div>`;
+});
+}
+function admin(){
+let clave=prompt("Contraseña de administrador");
+if(clave==="elebox2026"){
+document.getElementById("admin").style.display="block";
+}else{
+alert("Contraseña incorrecta");
+}
+}
+function agregar(){
+let nombre=document.getElementById("nombre").value;
+let categoria=document.getElementById("categoria").value;
+let precio=Number(document.getElementById("precio").value);
+let foto=document.getElementById("foto").value;
+if(!nombre||!precio||!foto.startsWith("https://")){
+alert("Completá todos los campos correctamente");
+return;
+}
+productos.unshift({nombre,categoria,precio,foto});
+guardar();
+mostrar();
+alert("¡Producto agregado!");
+}
+function eliminar(i){
+if(confirm("¿Eliminar este producto?")){
+productos.splice(i,1);
+guardar();
+mostrar();
+}
+}
+mostrar();
+</script>
+</body>
+</html>
