@@ -2,131 +2,208 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EleBox | Streetwear</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#090a0d;color:white;font-family:Arial}
-header{padding:22px;background:#111318;display:flex;justify-content:space-between;align-items:center}
-h1{color:#b7ff35;font-size:32px;margin:0}
-button{background:#b7ff35;color:#090a0d;border:0;padding:11px;font-weight:bold;cursor:pointer;margin:4px}
-main{max-width:1100px;margin:auto;padding:20px}
-.hero{text-align:center;padding:65px 10px;background:#181b21;margin:20px 0}
-.hero h2{font-size:48px;margin:10px}
-input,select{padding:12px;background:#181b21;color:white;border:1px solid #444;margin:5px;max-width:100%}
-#admin{display:none;background:#181b21;padding:15px;margin:20px 0}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:15px}
-.product{background:#181b21;padding:12px;border:1px solid #333}
-.product img{width:100%;height:210px;object-fit:cover}
-.price{color:#b7ff35;font-weight:bold}
-small{display:block;color:#aaa;margin-top:5px}
-footer{text-align:center;padding:30px;color:#aaa}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#101010;color:white}
+header{padding:22px 7%;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #292929}
+.logo{font-size:28px;font-weight:900;color:#b5ff00}
+header span{color:#aaa;font-size:13px}
+.hero{padding:65px 7%;background:linear-gradient(120deg,#202020,#101010)}
+.hero h1{font-size:clamp(38px,8vw,65px);max-width:600px}
+.hero h1 span{color:#b5ff00}
+.hero p{color:#aaa;margin:15px 0 25px}
+button{border:0;padding:12px 18px;background:#b5ff00;color:#101010;font-weight:bold;cursor:pointer;border-radius:5px}
+button:hover{opacity:.8}
+main{padding:35px 7%}
+.tools{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0}
+input,select{padding:12px;background:#202020;color:white;border:1px solid #444;border-radius:5px}
+input{flex:1;min-width:160px}
+h2{margin:15px 0}
+.products{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px}
+.product{background:#1b1b1b;border:1px solid #303030;border-radius:10px;overflow:hidden}
+.product img{width:100%;height:210px;object-fit:cover;background:#292929}
+.info{padding:15px}
+.info p{color:#aaa;margin:8px 0}
+.price{color:#b5ff00;font-size:20px;font-weight:bold}
+.actions{display:flex;gap:8px;margin-top:12px}
+.actions button{flex:1;padding:10px 5px}
+.favorite{background:#333;color:white}
+footer{text-align:center;padding:30px;color:#888;border-top:1px solid #292929;margin-top:40px}
+#cart{background:#1b1b1b;padding:18px;border-radius:10px;margin:25px 0}
+#cart p{margin:10px 0;color:#ccc}
+#admin{display:none;background:#1b1b1b;padding:20px;margin-top:25px;border-radius:10px}
 </style>
 </head>
 <body>
+
 <header>
-<h1>EleBox.</h1>
-<button onclick="admin()">ADMINISTRAR</button>
+  <h1 class="logo">ELEBOX.</h1>
+  <span>STREETWEAR • UNISEX</span>
 </header>
-<main>
+
 <section class="hero">
-<p>NO RULES. JUST YOUR STYLE.</p>
-<h2>WEAR YOUR VIBE.</h2>
-<p>STREETWEAR · OVERSIZED · Y2K</p>
-<button onclick="document.getElementById('catalogo').scrollIntoView()">VER CATÁLOGO</button>
+  <h1>VESTÍ TU <span>ESTILO.</span></h1>
+  <p>Ropa y zapatillas urbanas. Tu estilo, tus reglas.</p>
+  <button onclick="document.getElementById('catalogo').scrollIntoView({behavior:'smooth'})">
+    EXPLORAR PRODUCTOS
+  </button>
 </section>
 
-<section id="admin">
-<h2>ADMINISTRAR PRODUCTOS</h2>
-<input id="nombre" placeholder="Nombre de la prenda">
-<select id="categoria">
-<option>REMERAS</option>
-<option>BUZOS</option>
-<option>PANTALONES</option>
-<option>ACCESORIOS</option>
-</select>
-<input id="precio" type="number" placeholder="Precio en guaraníes">
-<input id="foto" placeholder="Enlace de foto HTTPS">
-<button onclick="agregar()">AGREGAR PRODUCTO</button>
-</section>
+<main>
+  <h2 id="catalogo">🔥 CATÁLOGO</h2>
+  <div class="tools">
+    <input id="search" placeholder="Buscar productos..." oninput="render()">
+    <select id="category" onchange="render()">
+      <option value="Todos">Todas las categorías</option>
+      <option value="Ropa">Ropa</option>
+      <option value="Zapatillas">Zapatillas</option>
+    </select>
+  </div>
 
-<section id="catalogo">
-<h2>CATÁLOGO / 2026</h2>
-<input id="buscar" placeholder="Buscar prenda..." oninput="mostrar()">
-<div>
-<button onclick="filtro='TODOS';mostrar()">TODOS</button>
-<button onclick="filtro='REMERAS';mostrar()">REMERAS</button>
-<button onclick="filtro='BUZOS';mostrar()">BUZOS</button>
-<button onclick="filtro='PANTALONES';mostrar()">PANTALONES</button>
-<button onclick="filtro='ACCESORIOS';mostrar()">ACCESORIOS</button>
-</div>
-<div class="grid" id="productos"></div>
-</section>
+  <section class="products" id="products"></section>
+
+  <section id="cart">
+    <h2>🛒 TU CARRITO</h2>
+    <div id="cartItems">Todavía no agregaste productos.</div>
+    <h3 id="total">Total: G. 0</h3>
+    <button onclick="checkout()">COMPRAR POR WHATSAPP</button>
+  </section>
+
+  <h2>❤️ FAVORITOS</h2>
+  <div id="favorites" class="products"></div>
+
+  <button onclick="adminLogin()">ADMINISTRAR TIENDA</button>
+  <section id="admin">
+    <h2>Panel de administración</h2>
+    <input id="newName" placeholder="Nombre del producto">
+    <input id="newPrice" type="number" placeholder="Precio en guaraníes">
+    <input id="newImage" placeholder="URL de imagen">
+    <select id="newCategory">
+      <option>Ropa</option>
+      <option>Zapatillas</option>
+    </select>
+    <button onclick="addProduct()">AGREGAR PRODUCTO</button>
+    <p style="color:#aaa;margin-top:10px">Los cambios se guardan en este navegador.</p>
+  </section>
 </main>
-<footer>EleBox © 2026 · STREETWEAR PARAGUAY</footer>
+
+<footer>
+  <h2 class="logo">ELEBOX.</h2>
+  <p>Tu estilo. Tu identidad. 🔥</p>
+  <p>© 2026 EleBox</p>
+</footer>
 
 <script>
-const cambio=6062;
-let filtro="TODOS";
-let productos=JSON.parse(localStorage.getItem("elebox")||"null")||[
-{nombre:"Oversized Core Tee",categoria:"REMERAS",precio:85000,foto:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600"},
-{nombre:"Graphic Tee",categoria:"REMERAS",precio:95000,foto:"https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600"},
-{nombre:"Heavy Hoodie",categoria:"BUZOS",precio:180000,foto:"https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600"},
-{nombre:"Zip Hoodie",categoria:"BUZOS",precio:195000,foto:"https://images.unsplash.com/photo-1578681994506-b8f463449011?w=600"},
-{nombre:"Baggy Cargo",categoria:"PANTALONES",precio:210000,foto:"https://images.unsplash.com/photo-1542272604-787c3835535d?w=600"},
-{nombre:"Street Cap",categoria:"ACCESORIOS",precio:65000,foto:"https://images.unsplash.com/photo-1588850561407-ed78c282e89b?w=600"}
+const WHATSAPP = "595XXXXXXXXX";
+
+let products = JSON.parse(localStorage.getItem("elebox_products")) || [
+  {id:1,name:"Remera Oversize",price:85000,category:"Ropa",image:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600"},
+  {id:2,name:"Buzo Street",price:150000,category:"Ropa",image:"https://images.unsplash.com/photo-1556821840-3a63f95609a7?w=600"},
+  {id:3,name:"Zapatillas Urban",price:250000,category:"Zapatillas",image:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600"},
+  {id:4,name:"Remera Basic",price:70000,category:"Ropa",image:"https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?w=600"}
 ];
 
-function guardar(){
-localStorage.setItem("elebox",JSON.stringify(productos));
+let cart = [];
+let favorites = [];
+
+function money(n){
+  return "G. " + n.toLocaleString("es-PY");
 }
-function mostrar(){
-let q=document.getElementById("buscar").value.toLowerCase();
-document.getElementById("productos").innerHTML="";
-productos.forEach((p,i)=>{
-if(filtro!=="TODOS"&&p.categoria!==filtro)return;
-if(!p.nombre.toLowerCase().includes(q))return;
-document.getElementById("productos").innerHTML+=`
-<div class="product">
-<img src="${p.foto}" alt="${p.nombre}">
-<h3>${p.nombre}</h3>
-<p>${p.categoria}</p>
-<div class="price">$${(p.precio/cambio).toFixed(2)} USD</div>
-<small>₲ ${p.precio.toLocaleString("es-PY")}</small>
-<button onclick="eliminar(${i})">ELIMINAR</button>
-</div>`;
-});
+
+function save(){
+  localStorage.setItem("elebox_products",JSON.stringify(products));
 }
-function admin(){
-let clave=prompt("Contraseña de administrador");
-if(clave==="elebox2026"){
-document.getElementById("admin").style.display="block";
-}else{
-alert("Contraseña incorrecta");
+
+function card(p){
+  return `
+  <article class="product">
+    <img src="${p.image}" alt="${p.name}" onerror="this.src='https://placehold.co/400x300/222/fff?text=EleBox'">
+    <div class="info">
+      <h3>${p.name}</h3>
+      <p>${p.category}</p>
+      <div class="price">${money(p.price)}</div>
+      <div class="actions">
+        <button onclick="addCart(${p.id})">AGREGAR</button>
+        <button class="favorite" onclick="addFavorite(${p.id})">♡</button>
+      </div>
+    </div>
+  </article>`;
 }
+
+function render(){
+  const q=document.getElementById("search").value.toLowerCase();
+  const cat=document.getElementById("category").value;
+  const filtered=products.filter(p=>
+    p.name.toLowerCase().includes(q) &&
+    (cat==="Todos" || p.category===cat)
+  );
+  document.getElementById("products").innerHTML=
+    filtered.map(card).join("") || "<p>No hay productos.</p>";
+  document.getElementById("favorites").innerHTML=
+    favorites.map(id=>products.find(p=>p.id===id)).filter(Boolean).map(card).join("") || "<p>Sin favoritos todavía.</p>";
 }
-function agregar(){
-let nombre=document.getElementById("nombre").value;
-let categoria=document.getElementById("categoria").value;
-let precio=Number(document.getElementById("precio").value);
-let foto=document.getElementById("foto").value;
-if(!nombre||!precio||!foto.startsWith("https://")){
-alert("Completá todos los campos correctamente");
-return;
+
+function addCart(id){
+  const p=products.find(x=>x.id===id);
+  cart.push(p);
+  renderCart();
 }
-productos.unshift({nombre,categoria,precio,foto});
-guardar();
-mostrar();
-alert("¡Producto agregado!");
+
+function addFavorite(id){
+  if(!favorites.includes(id)) favorites.push(id);
+  render();
 }
-function eliminar(i){
-if(confirm("¿Eliminar este producto?")){
-productos.splice(i,1);
-guardar();
-mostrar();
+
+function renderCart(){
+  const area=document.getElementById("cartItems");
+  area.innerHTML=cart.length ? cart.map((p,i)=>
+    `<p>${p.name} — ${money(p.price)}
+    <button onclick="removeCart(${i})">Quitar</button></p>`
+  ).join("") : "Todavía no agregaste productos.";
+
+  document.getElementById("total").textContent=
+    "Total: " + money(cart.reduce((sum,p)=>sum+p.price,0));
 }
+
+function removeCart(i){
+  cart.splice(i,1);
+  renderCart();
 }
-mostrar();
+
+function checkout(){
+  if(!cart.length) return alert("Tu carrito está vacío.");
+  if(WHATSAPP==="595XXXXXXXXX") return alert("Primero configurá el número de WhatsApp de la tienda.");
+  const total=cart.reduce((s,p)=>s+p.price,0);
+  const items=cart.map(p=>p.name+" - "+money(p.price)).join("\n");
+  const msg=`Hola EleBox! Quiero consultar por este pedido:\n${items}\nTotal: ${money(total)}`;
+  window.open("https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg),"_blank");
+}
+
+function adminLogin(){
+  const pass=prompt("Contraseña de administración:");
+  if(pass==="elebox2026"){
+    document.getElementById("admin").style.display="block";
+  }else{
+    alert("Contraseña incorrecta.");
+  }
+}
+
+function addProduct(){
+  const name=document.getElementById("newName").value.trim();
+  const price=Number(document.getElementById("newPrice").value);
+  const image=document.getElementById("newImage").value.trim();
+  const category=document.getElementById("newCategory").value;
+  if(!name || price<=0 || !image) return alert("Completá todos los campos.");
+  products.push({id:Date.now(),name,price,image,category});
+  save();
+  render();
+  alert("Producto agregado.");
+}
+
+render();
+renderCart();
 </script>
 </body>
 </html>
